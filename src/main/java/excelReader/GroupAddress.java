@@ -1,22 +1,22 @@
 package excelReader;
 
 public class GroupAddress {
-    private final int indexX;
-    private final int indexY;
+    private final int rowIndex;
+    private final int columnIndex;
     private final int pageIndex;
 
-    public GroupAddress(int indexX, int indexY, int pageIndex) {
-        this.indexX = indexX;
-        this.indexY = indexY;
+    public GroupAddress(int rowIndex, int columnIndex, int pageIndex) {
+        this.rowIndex = rowIndex;
+        this.columnIndex = columnIndex;
         this.pageIndex = pageIndex;
     }
 
-    public int getIndexX() {
-        return indexX;
+    public int getRowIndex() {
+        return rowIndex;
     }
 
-    public int getIndexY() {
-        return indexY;
+    public int getColumnIndex() {
+        return columnIndex;
     }
 
     public int getPageIndex() {
