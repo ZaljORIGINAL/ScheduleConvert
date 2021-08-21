@@ -1,5 +1,6 @@
 package excelReader;
 
+import Database.GroupScheduleTable;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -31,6 +32,12 @@ public class ExcelReader {
         return groupAddressMap.values().stream()
                 .map(GroupAddress::getNumber)
                 .collect(Collectors.toList());
+    }
+
+
+    public void extractGroupSchedule(int number, GroupScheduleTable table) {
+        GroupAddress address = groupAddressMap.get(number);
+        //TODO Считывать данные по расписанию группы и записывать в базу данных
     }
 
     private void extractGroupAddress() {

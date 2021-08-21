@@ -4,6 +4,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import java.nio.file.Path;
+import java.sql.*;
 
 public class DBContext {
     public final String DATABASE_URL;
@@ -22,5 +23,11 @@ public class DBContext {
         TABLE_NAME_PREFIX = config.getString(DBHelper.CF_TABLE_PREFIX);
         USER_NAME = config.getString(DBHelper.CF_USER_NAME);
         USER_PASSWORD = config.getString(DBHelper.CF_USER_PASSWORD);
+    }
+
+    public Connection open() throws SQLException {
+        return DriverManager.getConnection(
+                DATABASE_URL +
+                        DATABASE_NAME);
     }
 }

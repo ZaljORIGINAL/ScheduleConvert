@@ -12,6 +12,5 @@ public class TablesManagerTest {
     public void ManagerCreateTest() {
         Path dbConfig = Paths.get("config", "dev","dbConfig.properties");
         TablesManager manager = new TablesManager(dbConfig);
-        assertEquals(2, manager.getTables().size());
     }
 }

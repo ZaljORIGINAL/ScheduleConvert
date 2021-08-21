@@ -7,18 +7,18 @@ import java.util.List;
 
 public class TablesManager {
     private final DBContext context;
-    private final List<String> tables;
+    private final List<String> tablesNames;
 
     public TablesManager(Path config) {
         context = new DBContext(config);
-        tables = new ArrayList<>();
+        tablesNames = new ArrayList<>();
 
-        try (Connection connection = open()) {
+        try (Connection connection = context.open()) {
             String sqlCommand = "SELECT table_name FROM information_schema.tables WHERE table_schema='public'";
             try (PreparedStatement statement = connection.prepareStatement(sqlCommand)) {
                 try (ResultSet result = statement.executeQuery()) {
                     while (result.next()) {
-                        tables.add(result.getString("table_name"));
+                        tablesNames.add(result.getString("table_name"));
                     }
                 }
             };
@@ -27,13 +27,12 @@ public class TablesManager {
         }
     }
 
-    public Connection open() throws SQLException {
-        return DriverManager.getConnection(
-                context.DATABASE_URL +
-                        context.DATABASE_NAME);
+    public List<String> getTablesNames() {
+        return tablesNames;
     }
 
-    public List<String> getTables() {
-        return tables;
+    public GroupScheduleTable getTable(int groupNumber) throws SQLException {
+        String expectedName = context.TABLE_NAME_PREFIX + "_" + groupNumber;
+        return new GroupScheduleTable(expectedName, context);
     }
 }
