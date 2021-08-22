@@ -10,7 +10,8 @@ public abstract class DBHelper {
 
     //Наименования колонок
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_START_TIME = "start_time";
+    public static final String COLUMN_DAY_OF_WEEK = "day_of_week";
+    public static final String COLUMN_TIME = "time";
     public static final String COLUMN_WEEK_TYPE = "week_type";
     public static final String COLUMN_DISCIPLINE_NAME = "discipline_name";
     public static final String COLUMN_BUILDING = "building";

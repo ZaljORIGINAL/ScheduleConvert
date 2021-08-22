@@ -56,7 +56,7 @@ public class ExcelReader {
                 cell = row.getCell(columnIndex);
                 String value = cell.getRichStringCellValue().toString();
                 int groupNumber = Integer.parseInt(value.substring(0, value.indexOf(" ")));
-                GroupAddress address = new GroupAddress(groupNumber,2, columnIndex - 2, sheetIndex);
+                GroupAddress address = new GroupAddress(groupNumber,2, columnIndex - 3, sheetIndex);
                 groupAddressMap.put(
                         address.getNumber(),
                         address);
