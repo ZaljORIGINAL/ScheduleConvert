@@ -20,15 +20,17 @@ public abstract class DBHelper {
     public static final String COLUMN_EDUCATOR = "educator";
 
     //Ключевые значения
-    public static final String TOP_WEEK_STR = "в";
-    public static final byte TOP_WEEK = 0;
-    public static final String LOWER_WEEK_STR = "н";
-    public static final byte LOWER_WEEK = 0;
+    public static final short TOP_WEEK = 0;
+    public static final short LOWER_WEEK = 1;
 
-    public static final String LECTURE_STR = "лек";
-    public static final byte LECTURE = 0;
-    public static final String LABORATORY_STR = "лаб";
-    public static final byte LABORATORY = 1;
-    public static final String PRACTICE_STR = "пр";
-    public static final byte PRACTICE = 2;
+    public static final short LECTURE = 0;
+    public static final short LABORATORY = 1;
+    public static final short PRACTICE = 2;
+
+    public static final short MONDAY = 0;
+    public static final short TUESDAY = 1;
+    public static final short WEDNESDAY = 2;
+    public static final short THURSDAY = 3;
+    public static final short FRIDAY = 4;
+    public static final short SATURDAY = 5;
 }
