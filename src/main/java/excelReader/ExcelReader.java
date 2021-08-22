@@ -1,6 +1,8 @@
 package excelReader;
 
+import Database.DBHelper;
 import Database.GroupScheduleTable;
+import Schedule.TimeSchedule;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -35,9 +37,13 @@ public class ExcelReader {
     }
 
 
-    public void extractGroupSchedule(int number, GroupScheduleTable table) {
+    public void extractGroupSchedule(int number, TimeSchedule timeSchedule, GroupScheduleTable table) {
         GroupAddress address = groupAddressMap.get(number);
-        //TODO Считывать данные по расписанию группы и записывать в базу данных
+/*        HSSFRow row = book.getSheetAt(address.getPageIndex()).getRow(address.getRowIndex());
+        table.insert(new Row(
+                getDayOfWeek(address, row),
+                getTime(address, row, timeSchedule)
+        ))*/
     }
 
     private void extractGroupAddress() {
@@ -62,5 +68,25 @@ public class ExcelReader {
                         address);
             }
         }
+    }
+
+    private short getDayOfWeek(GroupAddress address, HSSFRow row) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_DAY_OF_WEEK);
+        String value = cell.getStringCellValue();
+        return switch (value) {
+            case ExcelHelper.MONDAY -> DBHelper.MONDAY;
+            case ExcelHelper.TUESDAY -> DBHelper.TUESDAY;
+            case ExcelHelper.WEDNESDAY -> DBHelper.WEDNESDAY;
+            case ExcelHelper.THURSDAY -> DBHelper.THURSDAY;
+            case ExcelHelper.FRIDAY -> DBHelper.FRIDAY;
+            case ExcelHelper.SATURDAY -> DBHelper.SATURDAY;
+            default -> (short) -1;
+        };
+    }
+
+    private short getTime(GroupAddress address, HSSFRow row, TimeSchedule timeSchedule) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_TIME);
+        String value = cell.getStringCellValue();
+        return (short) timeSchedule.getPositionByTime(value);
     }
 }

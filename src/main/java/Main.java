@@ -1,5 +1,6 @@
 import Database.GroupScheduleTable;
 import Database.TablesManager;
+import Schedule.TimeSchedule;
 import excelReader.ExcelReader;
 
 import java.io.IOException;
@@ -13,12 +14,13 @@ public class Main {
     public static void main(String[] args) throws URISyntaxException, IOException {
         ExcelReader excelReader = buildExcelReader();
         TablesManager tablesManager = buildTablesManager();
+        TimeSchedule timeSchedule = buildTimeSchedule();
 
         List<Integer> groupsNumbers = excelReader.getGroupsNumbers();
         for (int number : groupsNumbers) {
             try {
                 GroupScheduleTable table = tablesManager.getTable(number);
-                excelReader.extractGroupSchedule(number, table);
+                excelReader.extractGroupSchedule(number, timeSchedule,table);
             } catch (SQLException exception) {
 
             }
@@ -36,5 +38,10 @@ public class Main {
                         .toURI());
 
         return new ExcelReader(excelSchedule);
+    }
+
+    private static TimeSchedule buildTimeSchedule() throws URISyntaxException, IOException {
+        Path timesFile = Path.of(Main.class.getResource("/times.txt").toURI());
+        return new TimeSchedule(timesFile);
     }
 }
