@@ -30,8 +30,10 @@ public class TimeSchedule {
                             Integer.parseInt(startFinish[0]),
                             Integer.parseInt(startFinish[1]));
 
-                    if (lastReaded.getFinish() < readed.getStart())
-                        times.add(lastReaded);
+                    if (lastReaded.getFinish() < readed.getStart()) {
+                        times.add(readed);
+                        lastReaded = readed;
+                    }
                     else
                         throw new RuntimeException("Ошибка в раписании времени");
 
@@ -59,7 +61,7 @@ public class TimeSchedule {
 
         for (TimeSession session : times) {
             if (time == session.getStart())
-                return times.indexOf(time);
+                return times.indexOf(session);
         }
         return -1;
     }

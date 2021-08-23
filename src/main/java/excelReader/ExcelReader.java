@@ -2,6 +2,7 @@ package excelReader;
 
 import Database.DBHelper;
 import Database.GroupScheduleTable;
+import Database.Row;
 import Schedule.TimeSchedule;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -12,6 +13,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +40,39 @@ public class ExcelReader {
     }
 
 
-    public void extractGroupSchedule(int number, TimeSchedule timeSchedule, GroupScheduleTable table) {
+    public void extractGroupSchedule(int number, TimeSchedule timeSchedule, GroupScheduleTable table) throws SQLException {
         GroupAddress address = groupAddressMap.get(number);
-/*        HSSFRow row = book.getSheetAt(address.getPageIndex()).getRow(address.getRowIndex());
-        table.insert(new Row(
-                getDayOfWeek(address, row),
-                getTime(address, row, timeSchedule)
-        ))*/
+        HSSFRow row;
+        short dayOfWeek = -1;
+        short time;
+        String disciplineName;
+        for (int index = 0; true; index++) {
+            row = book.getSheetAt(address.getPageIndex()).getRow(address.getRowIndex() + index);
+
+            dayOfWeek = getDayOfWeek(address, row, dayOfWeek);
+
+            time = getTime(address, row, timeSchedule);
+            if (time == -1)
+                break;
+
+            disciplineName = getDisciplineName(address, row);
+            if (disciplineName.isEmpty())
+                continue;
+
+            try {
+                table.insert(new Row(
+                        dayOfWeek,
+                        time,
+                        getWeekType(address, row),
+                        disciplineName,
+                        getBuilding(address, row),
+                        getClassRoom(address, row),
+                        getDisciplineType(address, row),
+                        getEducator(address, row)));
+            } catch (SQLException exception) {
+                System.out.println(exception.getMessage());
+            }
+        }
     }
 
     private void extractGroupAddress() {
@@ -70,23 +99,74 @@ public class ExcelReader {
         }
     }
 
-    private short getDayOfWeek(GroupAddress address, HSSFRow row) {
+    private short getDayOfWeek(GroupAddress address, HSSFRow row, short lastVar) {
         HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_DAY_OF_WEEK);
         String value = cell.getStringCellValue();
-        return switch (value) {
-            case ExcelHelper.MONDAY -> DBHelper.MONDAY;
-            case ExcelHelper.TUESDAY -> DBHelper.TUESDAY;
-            case ExcelHelper.WEDNESDAY -> DBHelper.WEDNESDAY;
-            case ExcelHelper.THURSDAY -> DBHelper.THURSDAY;
-            case ExcelHelper.FRIDAY -> DBHelper.FRIDAY;
-            case ExcelHelper.SATURDAY -> DBHelper.SATURDAY;
-            default -> (short) -1;
-        };
+        if (value.isEmpty())
+            return lastVar;
+        else {
+            lastVar = switch (value) {
+                case ExcelHelper.MONDAY -> DBHelper.MONDAY;
+                case ExcelHelper.TUESDAY -> DBHelper.TUESDAY;
+                case ExcelHelper.WEDNESDAY -> DBHelper.WEDNESDAY;
+                case ExcelHelper.THURSDAY -> DBHelper.THURSDAY;
+                case ExcelHelper.FRIDAY -> DBHelper.FRIDAY;
+                case ExcelHelper.SATURDAY -> DBHelper.SATURDAY;
+                default -> throw new RuntimeException("Неверный день недели!");
+            };
+            return lastVar;
+        }
     }
 
     private short getTime(GroupAddress address, HSSFRow row, TimeSchedule timeSchedule) {
         HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_TIME);
-        String value = cell.getStringCellValue();
+        String value = switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> new SimpleDateFormat("HH:mm").format(cell.getDateCellValue());
+            default -> null;
+        };
+
         return (short) timeSchedule.getPositionByTime(value);
+    }
+
+    private short getWeekType(GroupAddress address, HSSFRow row) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_WEEK_TYPE);
+        String value = cell.getStringCellValue();
+        return switch (value) {
+            case ExcelHelper.TOP_WEEK -> DBHelper.TOP_WEEK;
+            case ExcelHelper.LOWER_WEEK -> DBHelper.LOWER_WEEK;
+            default -> throw new RuntimeException("Неверный тип недели");
+        };
+    }
+
+    private String getDisciplineName(GroupAddress address, HSSFRow row) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_DISCIPLINE_NAME);
+        return cell.getStringCellValue();
+    }
+
+    private String getBuilding(GroupAddress address, HSSFRow row) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_BUILDING);
+        return cell.getStringCellValue();
+    }
+
+    private String getClassRoom(GroupAddress address, HSSFRow row) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_CLASS_ROOM);
+        return cell.getStringCellValue();
+    }
+
+    private short getDisciplineType(GroupAddress address, HSSFRow row) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_DISCIPLINE_TYPE);
+        String value = cell.getStringCellValue();
+        return switch (value) {
+            case ExcelHelper.LECTURE -> DBHelper.LECTURE;
+            case ExcelHelper.LABORATORY -> DBHelper.LABORATORY;
+            case ExcelHelper.PRACTICE -> DBHelper.PRACTICE;
+            default -> (short) -1;
+        };
+    }
+
+    private String getEducator(GroupAddress address, HSSFRow row) {
+        HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_EDUCATOR);
+        return cell.getStringCellValue();
     }
 }
