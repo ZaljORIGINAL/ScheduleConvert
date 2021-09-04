@@ -1,14 +1,13 @@
 package excelReader;
 
-import Database.DBContext;
-import Database.DBHelper;
-import Database.GroupScheduleTable;
-import Schedule.TimeSchedule;
-import Schedule.TimeScheduleTest;
+import database.DBContext;
+import database.DBHelper;
+import database.GroupScheduleTable;
+import schedule.TimeSchedule;
+import schedule.TimeScheduleTest;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;

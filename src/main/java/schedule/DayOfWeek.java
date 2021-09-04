@@ -1,6 +1,6 @@
-package Schedule;
+package schedule;
 
-import Database.Row;
+import database.Row;
 
 import java.nio.file.Path;
 import java.util.List;

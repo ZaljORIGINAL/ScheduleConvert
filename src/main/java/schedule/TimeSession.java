@@ -1,4 +1,4 @@
-package Schedule;
+package schedule;
 
 public class TimeSession {
     private final int start;

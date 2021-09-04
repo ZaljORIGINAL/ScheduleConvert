@@ -1,4 +1,4 @@
-package Schedule;
+package schedule;
 
 import java.io.*;
 import java.nio.file.Path;

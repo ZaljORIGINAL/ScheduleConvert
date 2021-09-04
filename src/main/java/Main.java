@@ -1,6 +1,6 @@
-import Database.GroupScheduleTable;
-import Database.TablesManager;
-import Schedule.TimeSchedule;
+import database.GroupScheduleTable;
+import database.TablesManager;
+import schedule.TimeSchedule;
 import excelReader.ExcelReader;
 
 import java.io.IOException;

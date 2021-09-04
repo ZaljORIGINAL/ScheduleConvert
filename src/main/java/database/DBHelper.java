@@ -1,4 +1,4 @@
-package Database;
+package database;
 
 public abstract class DBHelper {
     //Ключи для получения параметров из файла конфигурации базы данных
