@@ -14,6 +14,9 @@ public class GroupScheduleTableTest {
         Path dbConfig = Paths.get("config", "dev","dbConfig.properties");
         DBContext context = new DBContext(dbConfig);
         GroupScheduleTable table = new GroupScheduleTable(context.TABLE_NAME_PREFIX + "_" + 2201120, context);
-        assertTrue(table.existTable());
+        if (table.existTable())
+            table.deleteTable();
+        else
+            fail();
     }
 }

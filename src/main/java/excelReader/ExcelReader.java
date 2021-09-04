@@ -48,7 +48,8 @@ public class ExcelReader {
         String disciplineName;
         for (int index = 0; true; index++) {
             row = book.getSheetAt(address.getPageIndex()).getRow(address.getRowIndex() + index);
-
+            if (row == null)
+                break;
             dayOfWeek = getDayOfWeek(address, row, dayOfWeek);
 
             time = getTime(address, row, timeSchedule);
@@ -89,7 +90,12 @@ public class ExcelReader {
             row = sheet.getRow(rowIndex);
             for (int columnIndex = 3; columnIndex < row.getLastCellNum(); columnIndex += columnStep) {
                 cell = row.getCell(columnIndex);
+                if (cell == null)
+                    break;
                 String value = cell.getRichStringCellValue().toString();
+                if (value.isEmpty())
+                    break;
+
                 int groupNumber = Integer.parseInt(value.substring(0, value.indexOf(" ")));
                 GroupAddress address = new GroupAddress(groupNumber,2, columnIndex - 3, sheetIndex);
                 groupAddressMap.put(
@@ -151,7 +157,11 @@ public class ExcelReader {
 
     private String getClassRoom(GroupAddress address, HSSFRow row) {
         HSSFCell cell = row.getCell(address.getColumnIndex() + ExcelHelper.INDEX_CLASS_ROOM);
-        return cell.getStringCellValue();
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> String.valueOf((int) cell.getNumericCellValue());
+            default -> "---";
+        };
     }
 
     private short getDisciplineType(GroupAddress address, HSSFRow row) {

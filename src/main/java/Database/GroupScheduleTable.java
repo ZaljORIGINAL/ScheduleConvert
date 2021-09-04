@@ -67,6 +67,7 @@ public class GroupScheduleTable extends DBTable {
                 statement.setString(8, row.getEducator());
 
                 ResultSet result = statement.executeQuery();
+                result.next();
                 return new Row(result.getInt(DBHelper.COLUMN_ID), row);
             }
         }

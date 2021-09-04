@@ -17,6 +17,10 @@ public abstract class DBTable {
             createTable();
     }
 
+    public String getName() {
+        return name;
+    }
+
     public boolean existTable() throws SQLException {
         try (var connection = context.open()) {
             DatabaseMetaData metaData = connection.getMetaData();
